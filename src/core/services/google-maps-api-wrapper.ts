@@ -16,6 +16,7 @@ declare var google: any;
 export class GoogleMapsAPIWrapper {
   private _map: Promise<mapTypes.GoogleMap>;
   private _mapResolver: (value?: mapTypes.GoogleMap) => void;
+  public _gmap: mapTypes.GoogleMap;
 
   constructor(private _loader: MapsAPILoader, private _zone: NgZone) {
     this._map =
@@ -25,6 +26,7 @@ export class GoogleMapsAPIWrapper {
   createMap(el: HTMLElement, mapOptions: mapTypes.MapOptions): Promise<void> {
     return this._loader.load().then(() => {
       const map = new google.maps.Map(el, mapOptions);
+      this._gmap = map;
       this._mapResolver(<mapTypes.GoogleMap>map);
       return;
     });
@@ -93,6 +95,8 @@ export class GoogleMapsAPIWrapper {
    * Returns the native Google Maps Map instance. Be careful when using this instance directly.
    */
   getNativeMap(): Promise<mapTypes.GoogleMap> { return this._map; }
+
+  getNativeMapWithoutPromise(): mapTypes.GoogleMap { return this._gmap; }
 
   /**
    * Triggers the given event name on the map instance.
